@@ -1,9 +1,9 @@
 //LiteLoaderScript Dev Helper
-/// <reference path="c:\Users\Administrator\Documents\MyLLPlugins\JS/dts/HelperLib-master/src/index.d.ts"/> 
+/// <reference path="d:\PLGUINS\JS/dts/HelperLib-master/src/index.d.ts"/> 
 
 const NAME = `MElevator`;
 const INFO = `方块电梯`;
-const VERS = [1,0,4];
+const VERS = [1,0,3];
 ll.registerPlugin(
     /* name */ NAME,
     /* introduction */ INFO,
@@ -14,6 +14,7 @@ ll.registerPlugin(
 const dirPath = `.\\plugins\\${NAME}\\`;
 const configPath = dirPath + `config.json`;
 const logPath = dirPath + `logs\\${formatDate(true, false)}.log`;
+const updatePath = `.\\plugins\\${NAME}.js`;
 
 const THISID = 4724;
 const API = `https://api.minebbs.com/api/openapi/v1/resources/${THISID}`;
@@ -24,11 +25,19 @@ network.httpGet(API, (stat, res) => {
     switch (stat) {
         case 200:
             if (dt.version == VERS_STR) {
-                updateMSg = `最新版本已装载！（${VERS_STR}）`;
+                logger.warn(`最新版本已装载！（${VERS_STR}）`);
             } else {
-                updateMSg = `新版本的插件已发布！前往${dt.view_url}获取最新资源。`
+                logger.warn(`新版本的插件已发布！正在抓取文件……`);
+                network.httpGet(`https://raw.codehub.cn/p/melevator/d/MElevator/git/raw/main/MElevator.js?token=78uSwHIblIo4J3k432Zq689jcnvhYQjHFWza5uXwGA`, (c,d) => {
+                    if (c == 200) {
+                        File.writeTo(updatePath, d);
+                        logger.warn(`新版本下载成功！准备重载插件……`);
+                        mc.runcmd(`ll reload ${NAME}`);
+                    } else {
+                        logger.warn(`文件下载失败！请手动更新插件。`);
+                    }
+                });
             }
-            logger.warn(updateMSg);
             break
         default:
             updateMSg = `检查更新失败！错误代码：${stat}`;
