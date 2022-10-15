@@ -3,7 +3,7 @@
 
 const NAME = `MElevator`;
 const INFO = `方块电梯`;
-const VERS = [1,0,3];
+const VERS = [1,1,0];
 ll.registerPlugin(
     /* name */ NAME,
     /* introduction */ INFO,
